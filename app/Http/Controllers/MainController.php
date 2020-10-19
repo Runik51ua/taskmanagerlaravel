@@ -28,6 +28,12 @@ class MainController extends Controller
         return redirect()->route('home');
     }
 
+    public function edit(Request $request)
+    {
+        $task_info = Task_Model::where('id', '=', $request->task_id)->select();
+
+    }
+
     public function delete(Request $request)
     {
         Task_Model::where('id', '=' , $request->task_id)->delete();

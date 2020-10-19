@@ -44,6 +44,10 @@
                         <input type="hidden" name="task_id" value="{{ $task->id }}">
                         <button type="submit" class="btn btn-danger">Delete task</button>
                     </form>
+                    <form action="{{ route('edit') }}">
+                        <input type="hidden" name="task_id" value="{{ $task->id }}">
+                        <button type="submit" class="btn btn-warning">Edit task</button>
+                    </form>
                 </td>
             </tr>
             @endforeach
