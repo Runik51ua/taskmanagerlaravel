@@ -15,11 +15,16 @@ class MainController extends Controller
 
     public function create(Request $request)
     {
+        $validateData = $request->validate([
+           'task_name' => ['required'],
+           'task_desc' => ['required'],
+        ]);
         $Task_name = $request->task_name;
         $Task_desc = $request->task_desc;
-        if ($Task_name != null && $Task_desc !=null){
-            Task_Model::insert(['name' => $Task_name, 'description' => $Task_desc]);
-        }
+
+        Task_Model::insert(['name' => $Task_name, 'description' => $Task_desc]);
+
+
         return redirect()->route('home');
     }
 
