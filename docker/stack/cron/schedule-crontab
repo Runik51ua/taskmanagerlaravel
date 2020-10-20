@@ -1,0 +1,1 @@
+* * * * * php /usr/local/src/wor/artisan schedule:run >> /usr/local/src/daystage/storage/logs/cron.log 2>&1

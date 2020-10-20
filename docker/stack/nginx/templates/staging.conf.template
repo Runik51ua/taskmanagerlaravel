@@ -1,0 +1,79 @@
+server {
+    listen ${NGINX_PORT} ssl http2 default;
+    set ${DOLLAR}root_path ${DOCUMENT_ROOT};
+    root ${DOLLAR}root_path;
+    index index.php;
+
+    client_max_body_size ${UPLOAD_MAX_FILESIZE};
+    client_header_buffer_size 4k;
+    large_client_header_buffers 8 16k;
+
+    ssi on;
+    ssi_last_modified on;
+    resolver 8.8.4.4 8.8.8.8;
+    keepalive_timeout   60;
+    charset off;
+
+    #----------------------------------------------- SSL -----------------------------------------------
+    ssl_certificate /etc/ssl/certs/server.crt;
+    ssl_certificate_key /etc/ssl/certs/server.key;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 5m;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    ssl_prefer_server_ciphers on;
+    add_header Strict-Transport-Security "max-age=31536000";
+    ssl_ciphers EECDH:+AES256:-3DES:RSA+AES:RSA+3DES:!NULL:!RC4;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    #-----------------------------------------------------------------------------------------------------
+
+    #----------------------------------------------- GZIP ------------------------------------------------
+    gzip on;
+    gzip_disable "msie6";
+    gzip_vary on;
+    gzip_comp_level 2;
+    gzip_min_length 256;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.0;
+    gzip_proxied any;
+    gzip_types text/plain text/css application/json application/javascript application/x-javascript text/xml application/xml application/xml+rss text/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype image/svg+xml image/x-icon;
+    #-------------------------------------------------------------------------------------------------------
+
+    #------------------------------------------------ LOGS -------------------------------------------------
+    error_log ${DOCUMENT_ROOT}/../storage/logs/nginx.error.log;
+    access_log ${DOCUMENT_ROOT}/../storage/logs/nginx.access.log;
+    #-------------------------------------------------------------------------------------------------------
+
+    location / {
+	    try_files ${DOLLAR}uri ${DOLLAR}uri/ /index.php${DOLLAR}is_args${DOLLAR}args;
+    }
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    location ~ /\.ht {
+        deny  all;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass ${FASTCGI_HOST}:${FASTCGI_PORT};
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+
+        fastcgi_param SCRIPT_FILENAME ${DOLLAR}realpath_root${DOLLAR}fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT ${DOLLAR}realpath_root;
+	    fastcgi_param HTTPS on;
+	    fastcgi_param PHP_VALUE "upload_max_filesize=${UPLOAD_MAX_FILESIZE} \n post_max_size=${UPLOAD_MAX_FILESIZE}";
+        fastcgi_read_timeout 600;
+        fastcgi_hide_header "X-Powered-By";
+        internal;
+    }
+}
