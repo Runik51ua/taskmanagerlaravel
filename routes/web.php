@@ -21,7 +21,9 @@ Route::get('/create', 'MainController@create')->name('create');
 
 Route::get('/delete', 'MainController@delete')->name('delete');
 
-Route::get('/edit', 'MainController@edit')->name('edit');
+Route::get('/create_subtask', 'MainController@create_subtask')->name('create_subtask');
+
+Route::get('/delete_subtask', 'MainController@delete_subtask')->name('delete_subtask');
 
 
 
