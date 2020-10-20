@@ -1,0 +1,83 @@
+server {
+    listen ${NGINX_PORT};
+    root ${DOCUMENT_ROOT};
+
+    index index.php;
+    client_max_body_size 64M;
+
+    gzip on;
+    gzip_comp_level 2;
+    gzip_http_version 1.0;
+    gzip_proxied any;
+    gzip_min_length 1100;
+    gzip_buffers 16 8k;
+    gzip_types text/plain text/html text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Disable for IE < 6 because there are some known problems
+    gzip_disable "MSIE [1-6].(?!.*SV1)";
+
+    # Add a vary header for downstream proxies to avoid sending cached gzipped files to IE6
+    gzip_vary on;
+
+
+    location / {
+        try_files ${DOLLAR}uri ${DOLLAR}uri/ /index.php${DOLLAR}is_args${DOLLAR}args;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass ${FASTCGI_HOST}:${FASTCGI_PORT};
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+
+        fastcgi_param SCRIPT_FILENAME ${DOLLAR}realpath_root${DOLLAR}fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT ${DOLLAR}realpath_root;
+
+        internal;
+
+		set ${DOLLAR}cors '';
+		if (${DOLLAR}http_origin ~* (localhost|trade-edu-ui.loc|trade-edu-ui|trade-edu-ui\.it-devgroup\.com)) {
+		        set ${DOLLAR}cors 'true';
+		}
+
+		if (${DOLLAR}request_method = 'OPTIONS') {
+		    set ${DOLLAR}cors "${DOLLAR}{cors}options";
+		}
+		if (${DOLLAR}request_method = 'GET') {
+		    set ${DOLLAR}cors "${DOLLAR}{cors}get";
+		}
+		if (${DOLLAR}request_method = 'POST') {
+		    set ${DOLLAR}cors "${DOLLAR}{cors}post";
+		}
+
+		if (${DOLLAR}cors = "true") {
+		    # Catch all incase there's a request method we're not dealing with properly
+		    add_header 'Access-Control-Allow-Origin' "${DOLLAR}http_origin" always;
+		}
+
+		if (${DOLLAR}cors = "truepost") {
+		    add_header 'Access-Control-Allow-Origin' "${DOLLAR}http_origin" always;
+		    add_header 'Access-Control-Allow-Credentials' 'true' always;
+		    add_header 'Access-Control-Allow-Headers' 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
+
+		}
+
+		if (${DOLLAR}cors = "trueget") {
+		    add_header 'Access-Control-Allow-Origin' "${DOLLAR}http_origin";
+		    add_header 'Access-Control-Allow-Credentials' 'true';
+		    add_header 'Access-Control-Allow-Headers' 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Authorization,X-Items-Count,X-Previous-Item,X-Next-Item,X-localization';
+			add_header 'Access-Control-Expose-Headers' 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Authorization,X-Items-Count,X-Previous-Item,X-Next-Item,X-localization';
+		}
+
+		if (${DOLLAR}cors = "trueoptions") {
+			add_header 'Access-Control-Allow-Origin' "${DOLLAR}http_origin";
+			add_header 'Access-Control-Allow-Credentials' 'true';
+			add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, PATCH, DELETE';
+			add_header 'Access-Control-Allow-Headers' 'accept,authorization,cache-control,content-type,dnt,if-modified-since,keep-alive,origin,user-agent,x-mx-reqtoken,x-requested-with,X-Items-Count,X-Previous-Item,X-Next-Item,X-localization';
+			add_header 'Access-Control-Max-Age' 1728000;
+			add_header 'Content-Type' 'text/plain charset=UTF-8';
+			add_header 'Content-Length' 0;
+			return 204;
+		}
+
+    }
+}
