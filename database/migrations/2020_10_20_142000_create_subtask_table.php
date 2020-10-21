@@ -18,12 +18,12 @@ class CreateSubtaskTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->bigInteger('priority')->default(0);
-            $table->bigInteger('main_task_id')->unsigned();
+            $table->bigInteger('sub_task_id')->unsigned();
 
         });
 
         Schema::table('subtask', function (Blueprint $table) {
-            $table->foreign('main_task_id')->references('id')->on('tasks')->onDelete('CASCADE');
+            $table->foreign('sub_task_id')->references('id')->on('tasks')->onDelete('CASCADE');
         });
 
 
