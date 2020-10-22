@@ -16,6 +16,7 @@ use App\Task_Model;
 
 Route::get('/', 'MainController@index')->name('home');
 
+Route::post('/update-order', 'MainController@updateOrder');
 
 Route::get('/create', 'MainController@create')->name('create');
 

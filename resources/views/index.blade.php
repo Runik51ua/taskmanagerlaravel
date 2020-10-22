@@ -3,7 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://unpkg.com/jquery@2.2.4/dist/jquery.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css"/>
     <title>Task Manager</title>
 </head>
 <body>
@@ -24,7 +28,5 @@
     </div><!-- ./row-->
 
 </div><!-- ./container-->
-
-
 </body>
 </html>

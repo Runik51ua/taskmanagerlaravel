@@ -17,8 +17,11 @@ class CreateTaskTable extends Migration
             $table->bigIncrements('id');
             $table->string('name')->index();
             $table->string('description');
+            $table->timestamps();
         });
     }
+
+
 
     /**
      * Reverse the migrations.

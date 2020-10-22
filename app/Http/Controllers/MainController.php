@@ -6,14 +6,16 @@ use App\SubTask_Model;
 use App\Task_Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Symfony\Component\Console\Input\Input;
 
 class MainController extends Controller
 {
     public function index()
     {
-        $tasks = Task_Model::orderBy('id')->paginate(5);
-        $subtasks = SubTask_Model::orderBy('priority')->get();
-        return view('layout', compact('tasks', 'subtasks'));
+        $tasks = Task_Model::with(['subtask' => function ($q) {
+           $q->orderBy('priority');
+        }])->get();
+        return view('layout', compact('tasks'));
     }
 
     public function create(Request $request)
@@ -36,9 +38,8 @@ class MainController extends Controller
         $main_task_id = $request->task_id;
         $subtask_name = $request->subtask_name;
         $subtask_desc = $request->subtask_desc;
-        $subtask_priority = $request->subtask_priority;
 
-        SubTask_Model::insert(['name' => $subtask_name, 'description' => $subtask_desc, 'main_task_id' => $main_task_id, 'priority' => $subtask_priority]);
+        SubTask_Model::insert(['name' => $subtask_name, 'description' => $subtask_desc, 'task__model_id' => $main_task_id]);
 
         return redirect()->route('home');
 
@@ -55,4 +56,19 @@ class MainController extends Controller
         Task_Model::where('id', '=' , $request->task_id)->delete();
         return redirect()->route('home');
     }
+
+    public function updateOrder(Request $request){
+        if ($request->has('ids')){
+            foreach ($request->ids as $index => $id){
+                SubTask_Model::where('id', $id)
+                    ->update(['priority' => $index,'task__model_id' => $request->task_id]);
+            }
+
+
+        }
+
+            return ['success'=>true,'message'=>'Updated'];
+
+        }
+
 }

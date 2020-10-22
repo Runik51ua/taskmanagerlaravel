@@ -27,9 +27,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">description</th>
-                @if(count($subtasks))
-                    <th scope="col">Sub Tasks</th>
-                @endif
+                <th scope="col">Sub Tasks</th>
                 <th scope="col"></th>
 
             </tr>
@@ -40,39 +38,36 @@
                 <th scope="row">{{ $task->id }}</th>
                 <td>{{ $task->name }}</td>
                 <td>{{ $task->description }}</td>
-                @if(count($subtasks))
                     <td>
                         <div class="table-responsive">
-                            <table>
+                            <table class="current" data-id="{{ $task->id }}">
                                 <thead>
                                     <tr>
+                                        <th scope="col">id</th>
                                         <th scope="col">Name</th>
                                         <th scope="col">description</th>
-                                        <th scope="col">priority</th>
                                         <th scope="col"></th>
+
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach($subtasks as $subtask)
-                                        <tr>
-                                            @if($subtask->main_task_id == $task->id)
-                                                <td>{{ $subtask->name}}</td>
-                                                <td>{{ $subtask->description}}</td>
-                                                <td>{{ $subtask->priority}}</td>
+                                <tbody data-id="{{ $task->id }}" class="position">
+                                    @foreach($task->subtask as $stask)
+                                        <tr data-id="{{ $stask->id }}" class="subtask">
+                                                <td>{{ $stask->id}}</td>
+                                                <td>{{ $stask->name}}</td>
+                                                <td>{{ $stask->description}}</td>
                                                 <td>
                                                     <form action="{{ route('delete_subtask') }}" >
-                                                        <input type="hidden" name="subtask_id" value="{{ $subtask->id }}">
+                                                        <input type="hidden" name="subtask_id" value="{{ $stask->id }}">
                                                         <button type="submit" class="btn btn-danger btn-sm font-sm">Delete task</button>
                                                     </form>
                                                 </td>
-                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </td>
-                @endif
                 <td>
                     <form action="{{ route('create_subtask') }}">
                         <div class="form-group">
@@ -80,12 +75,6 @@
                                 <input type="hidden" name="task_id" value="{{ $task->id }}">
                                 <input type="text" name="subtask_name" placeholder="Sub task name">
                                 <input type="text" name="subtask_desc" placeholder="Sub task desc">
-                                <select name="subtask_priority" id="">
-                                    <option value="0">0</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                </select>
                             </div>
                             <div class="col-1">
                                 <button type="submit" class="btn btn-primary font-xs text-nowrap">Create sub task</button>
@@ -106,6 +95,38 @@
         </table>
 
     </div>
-        {{ $tasks->links() }}
     @endif
+    <script>
+        $(document).ready(function(){
+
+            function updateOrder($mainId){
+                var items = $mainId.sortable('toArray', {attribute: 'data-id'})
+                $.ajaxSetup({ headers: {'X-CSRF-TOKEN': '{{csrf_token()}}'}});
+
+                $.ajax({
+                    url:'{{url('update-order')}}',
+                    method:'POST',
+                    data:{
+                        ids:items,
+                        task_id: $mainId.data('id')
+                    },
+                    success:function(){
+                        return;
+                    }
+                })
+            }
+
+            var target = $('.position');
+
+            target.sortable({
+                axis: "y",
+                stop: function (event, ui){
+                    var sortData = target.sortable('toArray',{ attribute: 'data-id'})
+                    updateOrder($(event.target))
+                    // updateOrder(sortData.join(','))
+                }
+            })
+
+        })
+    </script>
 @endsection
