@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
 use App\Task_Model;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,6 @@ class Api_Tasks_Controller extends Controller
     public function store(Request $request)
     {
         $task = Task_Model::create($request->all());
-
         return response()->json($task, 201);
     }
 
@@ -37,7 +37,7 @@ class Api_Tasks_Controller extends Controller
         return response()->json($task, 200);
     }
 
-    public function delete(Task_Model $task)
+    public function destroy(Task_Model $task)
     {
         $task->delete();
 

@@ -14,14 +14,13 @@ class Api_SubTask_Controller extends Controller
         return response()->json($subTask, 201);
     }
 
-    public function update(Request $request, SubTask_Model $subTask)
+    public function update(Request $request, $id)
     {
-        $subTask->update($request->all());
-
+        $subTask = SubTask_Model::where('id',$id)->update($request->all());
         return response()->json($subTask, 200);
     }
 
-    public function delete(SubTask_Model $subTask)
+    public function destroy(SubTask_Model $subTask)
     {
         $subTask->delete();
 

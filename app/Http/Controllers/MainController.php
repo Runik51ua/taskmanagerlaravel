@@ -36,8 +36,14 @@ class MainController extends Controller
     public function create_subtask(Request $request)
     {
         $main_task_id = $request->task_id;
+
+        $validateData = $request->validate([
+            '$subtask_name' => ['required'],
+            '$subtask_desc' => ['required'],
+        ]);
         $subtask_name = $request->subtask_name;
         $subtask_desc = $request->subtask_desc;
+
 
         SubTask_Model::insert(['name' => $subtask_name, 'description' => $subtask_desc, 'task__model_id' => $main_task_id]);
 
