@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::apiResource('tasks', 'Api_Tasks_Controller');
+
+Route::apiResource('subtasks', 'Api_SubTask_Controller');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

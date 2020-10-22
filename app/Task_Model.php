@@ -11,4 +11,15 @@ class Task_Model extends Model
     public function subtask(){
         return $this->hasMany('App\SubTask_Model');
     }
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+
+    ];
 }

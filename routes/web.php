@@ -30,6 +30,8 @@ Route::get('/delete_subtask', 'MainController@delete_subtask')->name('delete_sub
 
 
 
+
+
 /* Auto-generated admin routes */
 Route::middleware(['auth:' . config('admin-auth.defaults.guard'), 'admin'])->group(static function () {
     Route::prefix('admin')->namespace('Admin')->name('admin/')->group(static function() {
