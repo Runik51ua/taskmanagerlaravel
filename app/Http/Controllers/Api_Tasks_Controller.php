@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class Api_Tasks_Controller extends Controller
 {
+
     public function index()
     {
         return Task_Model::with(['subtask' => function ($q) {
