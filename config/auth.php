@@ -14,7 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'api',
+//        'guard' => 'web',
         'passwords' => 'users',
     ],
 
@@ -40,14 +41,15 @@ return [
             'driver' => 'session',
             'provider' => 'admin_users',
         ],
-        
+
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
 
         'api' => [
-            'driver' => 'token',
+//            'driver' => 'token',
+            'driver' => 'jwt',
             'provider' => 'users',
             'hash' => false,
         ],
@@ -74,8 +76,8 @@ return [
         'admin_users' => [
             'driver' => 'eloquent',
             'model' => Brackets\AdminAuth\Models\AdminUser::class,
-        ], 
-        
+        ],
+
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
@@ -108,7 +110,7 @@ return [
             'table' => 'admin_password_resets',
             'expire' => 60,
         ],
-        
+
         'users' => [
             'provider' => 'users',
             'table' => 'password_resets',
