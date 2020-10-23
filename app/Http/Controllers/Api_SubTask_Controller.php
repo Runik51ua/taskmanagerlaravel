@@ -9,22 +9,37 @@ class Api_SubTask_Controller extends Controller
 {
     public function store(Request $request)
     {
-        $subTask =  SubTask_Model::create($request->all());
+        if (auth()->user()) {
+            $subTask =  SubTask_Model::create($request->all());
 
-        return response()->json($subTask, 201);
+            return response()->json($subTask, 201);
+        }
+        return response([
+            'message' => 'Unauthenticated'
+        ], 403);
     }
 
     public function update(Request $request, $id)
     {
-        $subTask = SubTask_Model::where('id',$id)->update($request->all());
-        return response()->json($subTask, 200);
+        if (auth()->user()) {
+            $subTask = SubTask_Model::where('id',$id)->update($request->all());
+            return response()->json($subTask, 200);
+        }
+        return response([
+            'message' => 'Unauthenticated'
+        ], 403);
     }
 
     public function destroy(SubTask_Model $subTask)
     {
-        $subTask->delete();
+        if (auth()->user()) {
+            $subTask->delete();
 
-        return response()->json(null, 204);
+            return response()->json(null, 204);
+        }
+        return response([
+            'message' => 'Unauthenticated'
+        ], 403);
     }
 
 

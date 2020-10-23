@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::apiResource('tasks', 'Api_Tasks_Controller');
-
 Route::apiResource('subtasks', 'Api_SubTask_Controller');
+
 
 Route::group([
     'middleware' => 'api',
